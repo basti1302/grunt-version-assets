@@ -1,6 +1,11 @@
 # grunt-version-assets
 
-> Use node-version-assets to rename static assets and update references
+This Grunt plug-in renames static assets (JavaScript files, CSS, ...) and at the same time updates references to these assets in other files (for example, HTML files). This enables you to deliver static assets with HTTP caching headers telling the browser to cache them forever, so the file will only be downloaded once. If the file changes, its file name changes and the new version will be downloaded, so users never see stale JavaScript or CSS files.
+
+* Uses [node-version-assets](https://github.com/techjacker/node-version-assets).
+* The md5hash of the file content will be added to the assets's file name. (app.min.js -> app.min.44d0440440442524c6d667900275e.js)
+* Unchanged assets will keep the same file name and not blow the browser cache.
+* Greps your HTML and other files and updates filenames of versioned files.
 
 ## Getting Started
 This plugin requires Grunt.
@@ -24,61 +29,96 @@ In your project's Gruntfile, add a section named `versioning` to the data object
 
 ```js
 grunt.initConfig({
+
   versioning: {
     options: {
-      // Task-specific options go here.
+      grepFiles: [
+        'public/**/*.html',
+      ]
     },
-    your_target: {
-      // Target-specific file lists and/or options go here.
+    js: {
+      src: [
+        'public/js/app.min.js',
+        'public/js/bundle.min.js',
+      ]
+    },
+    css: {
+      src: [
+        'public/css/master.css',
+        'public/css/bundle.min.js',
+      ]
     },
   },
-})
+
+});
 ```
 
 ### Options
 
-#### options.separator
-Type: `String`
-Default value: `',  '`
+#### options.grepFiles
+Type: An array of file names, paths and patterns.
+Default value: `[]`
 
-A string value that is used to do something with whatever.
+The list of files in which the plug-in replaces/updates the references to the asset files.
 
-#### options.punctuation
-Type: `String`
-Default value: `'.'`
+#### options.keepOriginal
+Type: `boolean`
+Default value: `true`
 
-A string value that is used to do something else with whatever else.
+If `true`, the original source file will be kept, otherwise it will be deleted.
+
+### More options
+
+[node-version-assets](https://github.com/techjacker/node-version-assets) actually offers a number of [other options](https://github.com/techjacker/node-version-assets#options), that have not been implemented in this plug-in. If you need any of these options, file an issue or better yet, a pull request (delegating options to node-version-assets is actually trivial).
 
 ### Usage Examples
 
-#### Default Options
-In this example, the default options are used to do something with whatever. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result would be `Testing, 1 2 3.`
+#### Basic Usage
 
-```js
-grunt.initConfig({
-  versioning: {
-    options: {},
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
-  },
-})
-```
-
-#### Custom Options
-In this example, custom options are used to do something else with whatever else. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result in this case would be `Testing: 1 2 3 !!!`
+In this example, a copy of the file `public/js/app.js` is created with a versioned file name (something like `public/js/app.17781b077d5a9c60c6504e4d1467e2b0.js`). The same is done for `public/css/app.css`. The file `index.html` is searched for references to `app.js` and `app.css`. The references will be updated to match the renamed files. The original files (`app.js` and `app.css`) will not be deleted. If there are versioned asset files from a former run of this plug-in, those will be deleted.
 
 ```js
 grunt.initConfig({
   versioning: {
     options: {
-      separator: ': ',
-      punctuation: ' !!!',
+      grepFiles: [
+        'public/index.html',
+      ]
     },
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
+    app: {
+      src: [
+        'public/js/app.js',
+        'public/css/app.css'
+      ]
     },
-  },
+})
+```
+
+#### Multiple Assets Sources
+
+In this example, a all JavaScript files under `public/js` are renamed to a versioned file name (something like `public/js/whatever.17781b077d5a9c60c6504e4d1467e2b0.js`). The same is done for all CSS files under `public/css`. A couple of HTML files are searched for references to the renamed asset files. The references will be updated to match the renamed files. The original asset files will be deleted. If there are versioned asset files from a former run of this plug-in, those will also be deleted.
+
+```js
+grunt.initConfig({
+  versioning: {
+    options: {
+      grepFiles: [
+        'public/index.html',
+        'public/index2.html',
+        'public/pages/*.html',
+      ],
+      keepOriginal: false
+    },
+    js: {
+      src: [
+        'public/js/**/*.js'
+      ]
+    },
+    css: {
+      src: [
+        'public/css/**/*.css'
+      ]
+    },
 })
 ```
 
@@ -86,7 +126,7 @@ grunt.initConfig({
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
-_(Nothing yet)_
+* 2014-11-02: 1.0.0 - Initial Release
 
 ## License
 Copyright (c) 2014 Bastian Krol. Licensed under the MIT license.
