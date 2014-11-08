@@ -8,6 +8,8 @@
 
 'use strict';
 
+var fs = require('fs');
+
 var Version = require("node-version-assets");
 
 module.exports = function(grunt) {
@@ -31,7 +33,8 @@ module.exports = function(grunt) {
       grunt.log.debug('Option: ' + key + ': ' + JSON.stringify(options[key]));
     });
 
-    var grepFilesExpanded = grunt.file.expandMapping(options.grepFiles);
+    var grepFilesExpanded = grunt.file.expandMapping({ nonull: true},
+      options.grepFiles);
 
     grunt.log.debug('**GREPFILES**');
     var grepFiles = [];
@@ -48,6 +51,30 @@ module.exports = function(grunt) {
       grunt.log.debug(file);
     });
 
+    // node-version-assets also checks if all files exist, but if files are
+    // missing it just prints the list of all specified files and prints a
+    // message that some files could not be found, without telling which one
+    // exactly are missing. This is pretty annoying, therfore we duplicate this
+    // check here and print a decent error message in case of missing files.
+    debugger;
+    var missingFiles = false;
+    grepFiles.forEach(function(grepFile) {
+      if (!fs.existsSync(grepFile)) {
+        grunt.log.error('versioning: You asked grunt-version-assets to replace asset references in the file "' + grepFile + '", however, this file does not exist.');
+        missingFiles = true;
+      }
+    })
+    assets.forEach(function(asset) {
+      if (!fs.existsSync(asset)) {
+        grunt.log.error('versioning: You asked grunt-version-assets to replace asset references in the file "' + grepFile + '", however, this file does not exist.');
+        grunt.log.error('versioning: You asked grunt-version-assets to rename the file "' + asset + '", however, this file does not exist.');
+        missingFiles = true;
+      }
+    })
+    if (missingFiles) {
+      return done(new Error('Some files specified for versioning have not been found.'));
+    }
+
     var versioner = new Version({
       assets: assets,
       grepFiles: grepFiles,
@@ -56,12 +83,10 @@ module.exports = function(grunt) {
 
     versioner.run(function(err) {
       if (err) {
-        done(false);
+        return done(err);
       } else {
-        done();
+        return done();
       }
     });
-
   });
-
 };
