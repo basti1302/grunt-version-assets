@@ -56,9 +56,9 @@ module.exports = function(grunt) {
 
     versioner.run(function(err) {
       if (err) {
-        done(false);
+        return done(err);
       } else {
-        done();
+        return done();
       }
     });
 

@@ -1,6 +1,6 @@
 {
   "name": "grunt-version-assets",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Use node-version-assets to rename static assets and update references",
   "homepage": "https://github.com/basti1302/grunt-version-assets",
   "repository": "https://github.com/basti1302/grunt-version-assets.git",
