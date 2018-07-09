@@ -67,6 +67,12 @@ Default value: `true`
 
 If `true`, the original source file will be kept, otherwise it will be deleted.
 
+#### options.newVersion
+Type: `string`
+Default value: defaults to generating an md5 hash of the file
+
+The cache-bust key to be used for each file, for example the current release or build number. e.g., `1.0.2.4`
+
 ### More options
 
 [node-version-assets](https://github.com/techjacker/node-version-assets) actually offers a number of [other options](https://github.com/techjacker/node-version-assets#options), that have not been implemented in this plug-in. If you need any of these options, file an issue or better yet, a pull request (delegating options to node-version-assets is actually trivial).
