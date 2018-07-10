@@ -1,13 +1,12 @@
 {
-  "name": "grunt-version-assets",
-  "version": "1.1.0",
+  "name": "grunt-assets-version",
+  "version": "1.0.0",
   "description": "Use node-version-assets to rename static assets and update references",
-  "homepage": "https://github.com/basti1302/grunt-version-assets",
-  "repository": "https://github.com/basti1302/grunt-version-assets.git",
+  "homepage": "https://github.com/michaelholm/grunt-assets-version",
+  "repository": "https://github.com/michaelholm/grunt-assets-version.git",
   "author": {
-    "name": "Bastian Krol",
-    "email": "bastian.krol@web.de",
-    "url": "https://twitter.com/bastiankrol/"
+    "name": "Michael Holm",
+    "email": "michael.holm@gmail.com"
   },
   "keywords": [
     "gruntplugin"

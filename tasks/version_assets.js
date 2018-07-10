@@ -52,6 +52,7 @@ module.exports = function(grunt) {
       assets: assets,
       grepFiles: grepFiles,
       keepOriginal: options.keepOriginal,
+      newVersion: options.newVersion,
     });
 
     versioner.run(function(err) {
